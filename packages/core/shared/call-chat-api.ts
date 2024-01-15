@@ -35,11 +35,14 @@ export async function callChatApi({
   onFinish?: (message: Message) => void;
   generateId: IdGenerator;
 }) {
+  const replyId = generateId();
+
   const response = await fetch(api, {
     method: 'POST',
     body: JSON.stringify({
       messages,
       ...body,
+      replyId,
     }),
     headers: {
       'Content-Type': 'application/json',
@@ -85,7 +88,7 @@ export async function callChatApi({
           onFinish(prefixMap.text);
         }
       },
-      generateId,
+      replyId,
     });
   } else {
     const createdAt = new Date();
@@ -93,7 +96,6 @@ export async function callChatApi({
 
     // TODO-STREAMDATA: Remove this once Stream Data is not experimental
     let streamedResponse = '';
-    const replyId = generateId();
     let responseMessage: Message = {
       id: replyId,
       createdAt,

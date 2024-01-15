@@ -20,7 +20,7 @@ export async function parseComplexResponse({
   abortControllerRef,
   update,
   onFinish,
-  generateId = nanoid,
+  replyId,
   getCurrentDate = () => new Date(),
 }: {
   reader: ReadableStreamDefaultReader<Uint8Array>;
@@ -29,7 +29,7 @@ export async function parseComplexResponse({
   };
   update: (merged: Message[], data: JSONValue[] | undefined) => void;
   onFinish?: (prefixMap: PrefixMap) => void;
-  generateId?: () => string;
+  replyId: string;
   getCurrentDate?: () => Date;
 }) {
   const createdAt = getCurrentDate();
@@ -49,7 +49,7 @@ export async function parseComplexResponse({
         };
       } else {
         prefixMap['text'] = {
-          id: generateId(),
+          id: replyId,
           role: 'assistant',
           content: value,
           createdAt,
@@ -61,7 +61,7 @@ export async function parseComplexResponse({
 
     if (type === 'function_call') {
       prefixMap['function_call'] = {
-        id: generateId(),
+        id: replyId,
         role: 'assistant',
         content: '',
         function_call: value.function_call,
@@ -76,7 +76,7 @@ export async function parseComplexResponse({
 
     if (type === 'tool_calls') {
       prefixMap['tool_calls'] = {
-        id: generateId(),
+        id: replyId,
         role: 'assistant',
         content: '',
         tool_calls: value.tool_calls,
